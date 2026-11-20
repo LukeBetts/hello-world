@@ -4,6 +4,7 @@ import { Body, Card, Row } from '../../components/ui';
 import { useClicker } from '../../lib/clicker';
 import { useStore } from '../../lib/store';
 import { useTheme } from '../../lib/theme';
+import { useFitSize } from '../../lib/useFitSize';
 import { sz } from '../../lib/scale';
 
 /** A free-standing clicker for ad-hoc training, walks, or capturing good behaviour. */
@@ -12,6 +13,8 @@ export default function Clicker() {
   const { state, dispatch } = useStore();
   const click = useClicker();
   const [count, setCount] = useState(0);
+  // Leave room for the click counter (about 56pt + gap) under the button.
+  const fit = useFitSize(sz(260), sz(110), sz(70));
 
   return (
     <View style={{ flex: 1, backgroundColor: t.bg, padding: sz(16), gap: sz(16) }}>
@@ -19,7 +22,10 @@ export default function Clicker() {
         Click the instant your dog does the right thing, then reward. Use it to capture good behaviour anytime.
       </Body>
 
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: sz(20) }}>
+      <View
+        onLayout={fit.onLayout}
+        style={{ flex: 1, minHeight: 0, alignItems: 'center', justifyContent: 'center', gap: sz(12) }}
+      >
         <Pressable
           onPress={() => {
             click();
@@ -28,22 +34,26 @@ export default function Clicker() {
           accessibilityRole="button"
           accessibilityLabel="Clicker"
           style={({ pressed }) => ({
-            width: sz(260),
-            height: sz(260),
-            borderRadius: sz(130),
+            width: fit.size,
+            height: fit.size,
+            borderRadius: fit.size / 2,
             backgroundColor: t.primary,
             alignItems: 'center',
             justifyContent: 'center',
             transform: [{ scale: pressed ? 0.93 : 1 }],
-            borderWidth: 10,
+            borderWidth: Math.max(4, sz(10) * fit.ratio),
             borderColor: t.primarySoft,
           })}
         >
-          <Text style={{ fontSize: sz(64) }}>🐾</Text>
-          <Text style={{ color: t.primaryText, fontSize: sz(28), fontWeight: '900', letterSpacing: sz(3) }}>CLICK</Text>
+          <Text style={{ fontSize: sz(64) * fit.ratio }}>🐾</Text>
+          <Text style={{ color: t.primaryText, fontSize: sz(28) * fit.ratio, fontWeight: '900', letterSpacing: sz(3) * fit.ratio }}>
+            CLICK
+          </Text>
         </Pressable>
         <Pressable onLongPress={() => setCount(0)} hitSlop={sz(10)}>
-          <Text style={{ color: t.text, fontSize: sz(40), fontWeight: '800', textAlign: 'center', fontVariant: ['tabular-nums'] }}>
+          <Text
+            style={{ color: t.text, fontSize: sz(32), lineHeight: sz(38), fontWeight: '800', textAlign: 'center', fontVariant: ['tabular-nums'] }}
+          >
             {count}
           </Text>
           <Text style={{ color: t.muted, fontSize: sz(12), textAlign: 'center' }}>clicks · long-press to reset</Text>

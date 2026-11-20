@@ -10,6 +10,7 @@ import { tapFeedback, useClicker } from '../../lib/clicker';
 import { newId, useActiveDog, useSkillProgress, useStore } from '../../lib/store';
 import { formatDuration, successRate } from '../../lib/stats';
 import { useTheme } from '../../lib/theme';
+import { useFitSize } from '../../lib/useFitSize';
 import { sz } from '../../lib/scale';
 
 type Rep = 'ok' | 'miss';
@@ -24,6 +25,8 @@ export default function TrainingSession() {
   const dog = useActiveDog();
   const progress = useSkillProgress(skillId);
   const click = useClicker();
+  // The big button shrinks to fit shorter screens (e.g. inside Safari with its toolbars).
+  const fit = useFitSize(sz(230), sz(120), sz(8));
 
   const startedAt = useRef(Date.now());
   const [elapsed, setElapsed] = useState(0);
@@ -230,15 +233,15 @@ export default function TrainingSession() {
           </Card>
         )}
 
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View onLayout={fit.onLayout} style={{ flex: 1, minHeight: 0, alignItems: 'center', justifyContent: 'center' }}>
           <Pressable
             onPress={onClick}
             accessibilityRole="button"
             accessibilityLabel="Click and count a success"
             style={({ pressed }) => ({
-              width: sz(230),
-              height: sz(230),
-              borderRadius: sz(115),
+              width: fit.size,
+              height: fit.size,
+              borderRadius: fit.size / 2,
               backgroundColor: t.primary,
               alignItems: 'center',
               justifyContent: 'center',
@@ -250,8 +253,12 @@ export default function TrainingSession() {
               elevation: 8,
             })}
           >
-            <Text style={{ color: t.primaryText, fontSize: sz(34), fontWeight: '900', letterSpacing: sz(2) }}>CLICK</Text>
-            <Text style={{ color: t.primaryText, opacity: 0.85, marginTop: sz(4) }}>mark + reward</Text>
+            <Text style={{ color: t.primaryText, fontSize: sz(34) * fit.ratio, fontWeight: '900', letterSpacing: sz(2) * fit.ratio }}>
+              CLICK
+            </Text>
+            <Text style={{ color: t.primaryText, opacity: 0.85, marginTop: sz(4), fontSize: Math.max(sz(11), sz(14) * fit.ratio) }}>
+              mark + reward
+            </Text>
           </Pressable>
         </View>
 
