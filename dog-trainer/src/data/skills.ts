@@ -8,6 +8,8 @@ export type Skill = {
   summary: string;
   /** What "done" looks like – used as the criteria for moving to Mastered. */
   goal: string;
+  /** The dog's age in weeks when this skill is scheduled in the plan. */
+  week: number;
   steps: string[];
   tips: string[];
 };
@@ -28,7 +30,7 @@ export const CATEGORY_EMOJI: Record<Category, string> = {
   Tricks: '🎪',
 };
 
-export const SKILLS: Skill[] = [
+const BASE_SKILLS: Omit<Skill, 'week'>[] = [
   // ── Foundations ────────────────────────────────────────────────
   {
     id: 'charge-marker',
@@ -389,6 +391,156 @@ export const SKILLS: Skill[] = [
     ],
     tips: ['Requires Down and part of Roll over — train those first.'],
   },
+  // ── Puppy essentials ───────────────────────────────────────────
+  {
+    id: 'toilet-training',
+    name: 'Toilet training',
+    category: 'Foundations',
+    level: 1,
+    summary: 'Teach your puppy to go outside, in one spot, on a routine.',
+    goal: 'A full week with no accidents indoors, and your puppy goes to the door when they need to go.',
+    steps: [
+      'Take your puppy out after waking, after eating, after play, and at least every 1–2 hours.',
+      'Go to the same spot and stand quietly. Say a cue like "Go potty" while they sniff.',
+      'The moment they finish, mark and give a treat right there, outside.',
+      'Supervise indoors. If they start to sniff and circle, calmly carry them out.',
+      'Gradually stretch the time between trips as they go a full day without accidents.',
+    ],
+    tips: [
+      'Never punish accidents — it teaches them to hide when they go. Clean with an enzyme cleaner.',
+      'A rough rule: puppies can hold it for about their age in months plus one, in hours.',
+    ],
+  },
+  {
+    id: 'crate',
+    name: 'Crate comfort',
+    category: 'Calm & Confidence',
+    level: 1,
+    summary: 'Make the crate a cosy den your puppy happily goes into.',
+    goal: 'Goes into the crate on cue and settles quietly with the door closed for 30 minutes.',
+    steps: [
+      'Leave the crate open with a soft bed. Drop treats inside for your puppy to find.',
+      'Feed meals in the crate with the door open.',
+      'Close the door for a few seconds while they eat, then open it before they finish.',
+      'Build up to a few minutes with you sitting nearby, then step out of sight briefly.',
+      'Add a cue like "Bed" and give a long-lasting chew for longer stays.',
+    ],
+    tips: [
+      'Never use the crate as punishment.',
+      'Young puppies need toilet breaks — don\'t crate for longer than they can hold it.',
+    ],
+  },
+  {
+    id: 'socialisation',
+    name: 'Socialisation',
+    category: 'Calm & Confidence',
+    level: 1,
+    summary: 'Positive, calm experiences of people, places, sounds and surfaces.',
+    goal: 'Your puppy has had calm, happy experiences with 100 new things (people, sounds, surfaces, places).',
+    steps: [
+      'Make a list: people of all ages, hats and umbrellas, traffic, bikes, vacuum, different floors, car rides.',
+      'Expose your puppy to one or two new things each day, from a distance where they stay relaxed.',
+      'Pair each new thing with treats: new thing appears, treats flow; it goes away, treats stop.',
+      'Let your puppy choose to approach — never force an interaction.',
+      'Note each experience in the session notes so you can track your 100.',
+    ],
+    tips: [
+      'The window up to about 16 weeks matters most, so start early.',
+      'Quality beats quantity. One calm experience is better than five scary ones.',
+      'Ask your vet when it\'s safe to visit public places before vaccinations are complete.',
+    ],
+  },
+  {
+    id: 'handling',
+    name: 'Handling & grooming',
+    category: 'Foundations',
+    level: 1,
+    summary: 'Get your puppy happy with paws, ears, mouth and brushing touched.',
+    goal: 'Lets you check ears, teeth and paws, and brush them, while staying relaxed.',
+    steps: [
+      'Touch a shoulder for one second, then treat. Repeat until your puppy looks happy about it.',
+      'Move on to paws, ears, tail, and gently lifting the lip, one area per session.',
+      'Hold each touch a little longer, and add a brush or nail clipper nearby (not used yet).',
+      'Touch the clipper to a nail, treat. Then trim one nail, treat lavishly.',
+      'Practice a "vet check" with a friend touching your puppy too.',
+    ],
+    tips: ['If your puppy pulls away, go back to a shorter, easier touch.'],
+  },
+  {
+    id: 'gentle-mouth',
+    name: 'Gentle mouth',
+    category: 'Manners',
+    level: 1,
+    summary: 'Bite inhibition: teach your puppy that human skin is fragile.',
+    goal: 'Plays with toys instead of hands, and mouths gently if at all.',
+    steps: [
+      'Keep a toy handy during play so your puppy has something better to bite.',
+      'If teeth touch skin hard, say "Ouch" calmly, and pause play for a few seconds.',
+      'Restart play with a toy. Praise gentle mouthing and toy chewing.',
+      'If your puppy is overtired and bitey, it\'s nap time — pop them in the crate with a chew.',
+    ],
+    tips: [
+      'Puppies bite most when they are tired, overexcited or teething.',
+      'Frozen carrots or wet frozen washcloths help with teething.',
+    ],
+  },
+  {
+    id: 'collar-leash',
+    name: 'Collar & leash comfort',
+    category: 'Recall & Leash',
+    level: 1,
+    summary: 'Get your puppy used to wearing a collar or harness and leash.',
+    goal: 'Wears a collar or harness and follows you happily on a loose leash around the house.',
+    steps: [
+      'Put the collar or harness on just before meals or play, then take it off after.',
+      'Clip on a light leash and let it trail while you supervise.',
+      'Pick up the leash and walk a few steps. Reward your puppy for following.',
+      'Practice indoors, then in the garden, before your first walks.',
+    ],
+    tips: ['If your puppy scratches at the collar, distract them with a game or treats.'],
+  },
 ];
+
+/**
+ * The weekly plan: the age (in weeks) at which each skill is scheduled.
+ * Most puppies come home at about 8 weeks.
+ */
+const PLAN_WEEK: Record<string, number> = {
+  'charge-marker': 8,
+  'name-game': 8,
+  'toilet-training': 8,
+  crate: 8,
+  sit: 9,
+  socialisation: 9,
+  touch: 10,
+  handling: 10,
+  down: 11,
+  'gentle-mouth': 11,
+  recall: 12,
+  'collar-leash': 12,
+  'leave-it': 13,
+  'check-in': 13,
+  stay: 14,
+  'off-jumping': 14,
+  'wait-door': 15,
+  'drop-it': 15,
+  'settle-mat': 16,
+  paw: 16,
+  'loose-leash': 17,
+  spin: 18,
+  'alone-time': 18,
+  'roll-over': 20,
+  'play-dead': 24,
+};
+
+export const PLAN_START_WEEK = 8;
+
+/** All skills, in plan order. */
+export const SKILLS: Skill[] = BASE_SKILLS.map((s) => ({ ...s, week: PLAN_WEEK[s.id] ?? 26 })).sort(
+  (a, b) => a.week - b.week,
+);
+
+/** The plan weeks that have skills, in order. */
+export const PLAN_WEEKS: number[] = [...new Set(SKILLS.map((s) => s.week))];
 
 export const SKILL_BY_ID: Record<string, Skill> = Object.fromEntries(SKILLS.map((s) => [s.id, s]));

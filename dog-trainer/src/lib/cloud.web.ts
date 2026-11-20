@@ -35,7 +35,15 @@ const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0
 function toDog(id: string, d: Record<string, unknown>): Dog | null {
   const name = str(d.name, 60);
   if (!name) return null;
-  return { id, name, breed: str(d.breed, 60), emoji: str(d.emoji, 16) || '🐶', createdAt: num(d.createdAt) };
+  const birthDate = num(d.birthDate);
+  return {
+    id,
+    name,
+    breed: str(d.breed, 60),
+    emoji: str(d.emoji, 16) || '🐶',
+    createdAt: num(d.createdAt),
+    ...(birthDate > 0 ? { birthDate } : {}),
+  };
 }
 
 function toSession(id: string, d: Record<string, unknown>): Session | null {

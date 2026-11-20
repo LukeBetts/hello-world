@@ -4,7 +4,8 @@ import { Pressable, Text, View } from 'react-native';
 import { SyncWarning } from '../../components/SyncBanner';
 import { SkillRow } from '../../components/SkillRow';
 import { Body, Button, Card, H1, H2, ProgressBar, Row, Screen, Stat } from '../../components/ui';
-import { SKILLS, SKILL_BY_ID } from '../../data/skills';
+import { PLAN_START_WEEK, SKILLS, SKILL_BY_ID } from '../../data/skills';
+import { formatAge, summarizePlan } from '../../lib/plan';
 import { useActiveDog, useStore } from '../../lib/store';
 import { formatMinutes, minutesOn, startOfDay, streak } from '../../lib/stats';
 import { useTheme } from '../../lib/theme';
@@ -50,13 +51,10 @@ export default function Today() {
   const currentStreak = streak(dogSessions);
   const mastered = Object.values(progress).filter((p) => p.status === 'mastered').length;
 
-  const inProgress = SKILLS.filter((s) => {
-    const st = progress[s.id]?.status;
-    return st === 'learning' || st === 'reliable';
-  });
-  const suggestions = inProgress.length
-    ? inProgress.slice(0, 4)
-    : SKILLS.filter((s) => s.category === 'Foundations' && !progress[s.id]).slice(0, 3);
+  const plan = summarizePlan(dog, progress);
+  const overdue = [...plan.behind, ...plan.catchup];
+  const dueSoFar = plan.done.length + plan.current.length + overdue.length;
+  const nextSkills = plan.nextWeek ? SKILLS.filter((s) => s.week === plan.nextWeek) : [];
 
   const tip = TIPS[new Date().getDate() % TIPS.length];
   const last = dogSessions[0];
@@ -66,12 +64,89 @@ export default function Today() {
       <Row>
         <Text style={{ fontSize: 44 }}>{dog.emoji}</Text>
         <View style={{ flex: 1 }}>
-          <Body muted>Training with</Body>
           <H1>{dog.name}</H1>
+          <Body muted>
+            {plan.age === null
+              ? 'Age not set'
+              : plan.age < PLAN_START_WEEK
+                ? `${formatAge(plan.age)} old · plan starts at ${PLAN_START_WEEK} weeks`
+                : `${formatAge(plan.age)} old · week ${plan.age} of the plan`}
+          </Body>
         </View>
       </Row>
 
       <SyncWarning />
+
+      {plan.age === null ? (
+        <Card style={{ gap: 10, backgroundColor: t.primarySoft, borderColor: t.primarySoft }}>
+          <H2>Get a weekly plan</H2>
+          <Body>Add {dog.name}'s age and we'll schedule new skills for each week, and show you if you fall behind.</Body>
+          <Button title={`Add ${dog.name}'s age`} onPress={() => router.push({ pathname: '/dog-edit', params: { id: dog.id } })} />
+        </Card>
+      ) : (
+        <Card style={{ gap: 12 }}>
+          <Row style={{ justifyContent: 'space-between' }}>
+            <H2>
+              {plan.behind.length > 0
+                ? `${plan.behind.length} skill${plan.behind.length === 1 ? '' : 's'} behind`
+                : plan.planFinished && overdue.length === 0
+                  ? 'Plan complete 🎓'
+                  : 'On track ✅'}
+            </H2>
+            <Body muted>
+              {plan.done.length}/{SKILLS.length} done
+            </Body>
+          </Row>
+          <ProgressBar
+            value={dueSoFar === 0 ? 0 : plan.done.length / dueSoFar}
+            color={plan.behind.length > 0 ? t.danger : t.success}
+          />
+          <Body muted style={{ fontSize: 13 }}>
+            {dueSoFar === 0
+              ? `The first skills are scheduled at ${PLAN_START_WEEK} weeks old.`
+              : `${plan.done.length} of the ${dueSoFar} skills due by now are Reliable or Mastered.`}
+            {plan.catchup.length > 0
+              ? ` ${plan.catchup.length} skill${plan.catchup.length === 1 ? ' was' : 's were'} scheduled before you added ${dog.name}: work through them when you can.`
+              : ''}
+          </Body>
+          {overdue.length > 0 && (
+            <Button
+              title={plan.behind.length > 0 ? 'See what to catch up on' : 'See catch-up skills'}
+              variant="secondary"
+              onPress={() => router.push({ pathname: '/skills', params: { filter: 'behind' } })}
+            />
+          )}
+        </Card>
+      )}
+
+      {plan.age !== null && (
+        <View style={{ gap: 10 }}>
+          <H2>{plan.current.length > 0 ? 'This week' : 'No new skills this week'}</H2>
+          {plan.current.length === 0 && (
+            <Body muted>
+              {overdue.length > 0
+                ? 'A good week to catch up on earlier skills.'
+                : 'A good week to practise what you have learned so far.'}
+            </Body>
+          )}
+          {plan.current.map((s) => (
+            <SkillRow key={s.id} skill={s} />
+          ))}
+          {plan.behind.slice(0, 3).map((s) => (
+            <SkillRow key={s.id} skill={s} />
+          ))}
+          {plan.current.length === 0 && nextSkills.length > 0 && (
+            <>
+              <Body style={{ fontWeight: '700', marginTop: 6 }}>
+                Coming up at {formatAge(plan.nextWeek!)} old
+              </Body>
+              {nextSkills.map((s) => (
+                <SkillRow key={s.id} skill={s} />
+              ))}
+            </>
+          )}
+        </View>
+      )}
 
       <Card style={{ gap: 14 }}>
         <Row style={{ justifyContent: 'space-between' }}>
@@ -96,17 +171,11 @@ export default function Today() {
         />
       )}
 
-      <View style={{ gap: 10 }}>
-        <H2>{inProgress.length ? 'Keep working on' : 'Start with the foundations'}</H2>
-        {suggestions.map((s) => (
-          <SkillRow key={s.id} skill={s} />
-        ))}
-        <Pressable onPress={() => router.push('/skills')}>
-          <Text style={{ color: t.primary, fontWeight: '700', textAlign: 'center', padding: 8 }}>
-            Browse all {SKILLS.length} skills →
-          </Text>
-        </Pressable>
-      </View>
+      <Pressable onPress={() => router.push('/skills')}>
+        <Text style={{ color: t.primary, fontWeight: '700', textAlign: 'center', padding: 8 }}>
+          See the full plan →
+        </Text>
+      </Pressable>
 
       <Card style={{ backgroundColor: t.primarySoft, borderColor: t.primarySoft, gap: 6 }}>
         <Text style={{ fontWeight: '800', color: t.primary }}>💡 Trainer tip</Text>

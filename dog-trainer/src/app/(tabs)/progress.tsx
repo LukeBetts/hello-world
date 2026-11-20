@@ -3,7 +3,9 @@ import React, { useMemo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { confirmAction } from '../../components/ConfirmDialog';
 import { Body, Card, H2, ProgressBar, Row, Screen, Stat } from '../../components/ui';
-import { CATEGORIES, CATEGORY_EMOJI, SKILLS, SKILL_BY_ID } from '../../data/skills';
+import { planColor } from '../../components/SkillRow';
+import { CATEGORY_EMOJI, SKILLS, SKILL_BY_ID } from '../../data/skills';
+import { formatAge, PLAN_LABEL, summarizePlan } from '../../lib/plan';
 import { useActiveDog, usePeopleNames, useStore } from '../../lib/store';
 import { formatMinutes, lastNDays, relativeDay, streak, successRate } from '../../lib/stats';
 import { useTheme } from '../../lib/theme';
@@ -20,6 +22,7 @@ export default function Progress() {
   const totals = sessions.reduce((a, s) => ({ ok: a.ok + s.successes, miss: a.miss + s.misses }), { ok: 0, miss: 0 });
   const rate = successRate(totals.ok, totals.miss);
   const progress = (dog && state.progress[dog.id]) || {};
+  const plan = summarizePlan(dog, progress);
   const people = useMemo(() => [...new Set(sessions.map((s) => s.by).filter((b): b is string => !!b))], [sessions]);
   const names = usePeopleNames(people);
   const showWho = people.length > 1;
@@ -73,29 +76,32 @@ export default function Progress() {
       </Card>
 
       <Card style={{ gap: 12 }}>
-        <H2>Skills by category</H2>
-        {CATEGORIES.map((c) => {
-          const skills = SKILLS.filter((s) => s.category === c);
-          const score =
-            skills.reduce((a, s) => {
-              const st = progress[s.id]?.status;
-              return a + (st === 'mastered' ? 1 : st === 'reliable' ? 0.66 : st === 'learning' ? 0.33 : 0);
-            }, 0) / skills.length;
-          const mastered = skills.filter((s) => progress[s.id]?.status === 'mastered').length;
-          return (
-            <View key={c} style={{ gap: 6 }}>
-              <Row style={{ justifyContent: 'space-between' }}>
-                <Body>
-                  {CATEGORY_EMOJI[c]} {c}
-                </Body>
-                <Body muted style={{ fontSize: 13 }}>
-                  {mastered}/{skills.length} mastered
-                </Body>
-              </Row>
-              <ProgressBar value={score} color={score >= 1 ? t.success : t.primary} />
-            </View>
-          );
-        })}
+        <H2>Training plan</H2>
+        {dog.birthDate ? (
+          <>
+            <Row style={{ gap: 6 }}>
+              {(
+                [
+                  ['done', plan.done.length],
+                  ['current', plan.current.length],
+                  ['behind', plan.behind.length + plan.catchup.length],
+                  ['upcoming', plan.upcoming.length],
+                ] as const
+              ).map(([key, n]) => (
+                <View key={key} style={{ flex: 1, alignItems: 'center', gap: 2 }}>
+                  <Text style={{ fontSize: 22, fontWeight: '800', color: planColor(t, key) }}>{n}</Text>
+                  <Text style={{ fontSize: 12, color: t.muted }}>{PLAN_LABEL[key].toLowerCase()}</Text>
+                </View>
+              ))}
+            </Row>
+            <ProgressBar value={plan.done.length / SKILLS.length} color={t.success} />
+            <Body muted style={{ fontSize: 13 }}>
+              {plan.done.length} of {SKILLS.length} skills Reliable or Mastered. {dog.name} is {formatAge(plan.age ?? 0)} old.
+            </Body>
+          </>
+        ) : (
+          <Body muted>Add {dog.name}'s age on the Dogs tab to see the weekly plan.</Body>
+        )}
       </Card>
 
       <View style={{ gap: 8 }}>

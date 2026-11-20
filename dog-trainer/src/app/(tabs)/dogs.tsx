@@ -5,6 +5,7 @@ import { confirmAction } from '../../components/ConfirmDialog';
 import { SYNC_COPY } from '../../components/SyncBanner';
 import { Body, Button, Card, H2, Row, Screen } from '../../components/ui';
 import { tapFeedback } from '../../lib/clicker';
+import { ageInWeeks, formatAge } from '../../lib/plan';
 import { useStore } from '../../lib/store';
 import { useTheme } from '../../lib/theme';
 
@@ -43,7 +44,13 @@ export default function Dogs() {
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 17, fontWeight: '800', color: t.text }}>{d.name}</Text>
                 <Body muted style={{ fontSize: 13 }}>
-                  {[d.breed, `${count} session${count === 1 ? '' : 's'}`].filter(Boolean).join(' · ')}
+                  {[
+                    d.birthDate ? `${formatAge(ageInWeeks(d) ?? 0)} old` : 'Age not set',
+                    d.breed,
+                    `${count} session${count === 1 ? '' : 's'}`,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
                 </Body>
               </View>
               {active && <Text style={{ color: t.primary, fontWeight: '800' }}>Active</Text>}

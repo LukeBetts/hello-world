@@ -19,6 +19,8 @@ export type Dog = {
   breed: string;
   emoji: string;
   createdAt: number;
+  /** Approximate date of birth (ms), worked out from the age entered. */
+  birthDate?: number;
 };
 
 export type SkillProgress = {

@@ -2,7 +2,9 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Body, Button, Card, H1, H2, Row, Screen, Stat, StatusPill } from '../../components/ui';
+import { planColor } from '../../components/SkillRow';
 import { CATEGORY_EMOJI, SKILL_BY_ID } from '../../data/skills';
+import { formatAge, PLAN_LABEL, planState } from '../../lib/plan';
 import { tapFeedback } from '../../lib/clicker';
 import { STATUS_LABEL, STATUS_ORDER, useActiveDog, useSkillProgress, useStore } from '../../lib/store';
 import { formatMinutes, relativeDay, successRate } from '../../lib/stats';
@@ -15,6 +17,7 @@ export default function SkillDetail() {
   const { state, dispatch } = useStore();
   const dog = useActiveDog();
   const progress = useSkillProgress(id);
+  const plan = skill ? planState(skill, dog, progress) : 'upcoming';
 
   if (!skill) {
     return (
@@ -50,6 +53,12 @@ export default function SkillDetail() {
         <Text style={{ fontSize: 40 }}>{CATEGORY_EMOJI[skill.category]}</Text>
         <H1>{skill.name}</H1>
         <Body muted>{skill.summary}</Body>
+        <Body style={{ fontSize: 14, marginTop: 4 }}>
+          📅 Scheduled at <Text style={{ fontWeight: '700' }}>{formatAge(skill.week)} old</Text>
+          {dog?.birthDate ? (
+            <Text style={{ color: planColor(t, plan), fontWeight: '700' }}> · {PLAN_LABEL[plan]}</Text>
+          ) : null}
+        </Body>
       </View>
 
       {dog && (
