@@ -9,6 +9,7 @@ import { tapFeedback } from '../../lib/clicker';
 import { STATUS_LABEL, STATUS_ORDER, useActiveDog, useSkillProgress, useStore } from '../../lib/store';
 import { formatMinutes, relativeDay, successRate } from '../../lib/stats';
 import { statusColor, useTheme } from '../../lib/theme';
+import { sz } from '../../lib/scale';
 
 export default function SkillDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -49,11 +50,11 @@ export default function SkillDetail() {
     <Screen>
       <Stack.Screen options={{ title: skill.category }} />
 
-      <View style={{ gap: 6 }}>
-        <Text style={{ fontSize: 40 }}>{CATEGORY_EMOJI[skill.category]}</Text>
+      <View style={{ gap: sz(6) }}>
+        <Text style={{ fontSize: sz(40) }}>{CATEGORY_EMOJI[skill.category]}</Text>
         <H1>{skill.name}</H1>
         <Body muted>{skill.summary}</Body>
-        <Body style={{ fontSize: 14, marginTop: 4 }}>
+        <Body style={{ fontSize: sz(14), marginTop: sz(4) }}>
           📅 Scheduled at <Text style={{ fontWeight: '700' }}>{formatAge(skill.week)} old</Text>
           {dog?.birthDate ? (
             <Text style={{ color: planColor(t, plan), fontWeight: '700' }}> · {PLAN_LABEL[plan]}</Text>
@@ -65,12 +66,12 @@ export default function SkillDetail() {
         <Button big title={`▶  Start training ${dog.name}`} onPress={() => router.push(`/session/${skill.id}`)} />
       )}
 
-      <Card style={{ gap: 10 }}>
+      <Card style={{ gap: sz(10) }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <H2>Status</H2>
           <StatusPill status={progress.status} />
         </Row>
-        <Row style={{ gap: 6, flexWrap: 'wrap' }}>
+        <Row style={{ gap: sz(6), flexWrap: 'wrap' }}>
           {STATUS_ORDER.map((s) => {
             const active = progress.status === s;
             const c = statusColor(t, s);
@@ -85,20 +86,20 @@ export default function SkillDetail() {
                 }}
                 style={{
                   flexGrow: 1,
-                  paddingVertical: 8,
-                  borderRadius: 10,
+                  paddingVertical: sz(8),
+                  borderRadius: sz(10),
                   alignItems: 'center',
                   backgroundColor: active ? c.bg : 'transparent',
                   borderWidth: 1,
                   borderColor: active ? c.fg : t.border,
                 }}
               >
-                <Text style={{ fontSize: 12, fontWeight: '700', color: active ? c.fg : t.muted }}>{STATUS_LABEL[s]}</Text>
+                <Text style={{ fontSize: sz(12), fontWeight: '700', color: active ? c.fg : t.muted }}>{STATUS_LABEL[s]}</Text>
               </Pressable>
             );
           })}
         </Row>
-        <Body muted style={{ fontSize: 13 }}>
+        <Body muted style={{ fontSize: sz(13) }}>
           🎯 Goal: {skill.goal}
         </Body>
       </Card>
@@ -113,9 +114,9 @@ export default function SkillDetail() {
         </Card>
       )}
 
-      <View style={{ gap: 8 }}>
+      <View style={{ gap: sz(8) }}>
         <H2>Steps</H2>
-        <Body muted style={{ fontSize: 13 }}>
+        <Body muted style={{ fontSize: sz(13) }}>
           Tap a step to mark it as the one you're working on.
         </Body>
         {skill.steps.map((step, i) => {
@@ -127,9 +128,9 @@ export default function SkillDetail() {
               onPress={() => setStep(i)}
               style={{
                 flexDirection: 'row',
-                gap: 12,
-                padding: 14,
-                borderRadius: 14,
+                gap: sz(12),
+                padding: sz(14),
+                borderRadius: sz(14),
                 backgroundColor: current ? t.primarySoft : t.card,
                 borderWidth: 1,
                 borderColor: current ? t.primary : t.card,
@@ -137,15 +138,15 @@ export default function SkillDetail() {
             >
               <View
                 style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 13,
+                  width: sz(26),
+                  height: sz(26),
+                  borderRadius: sz(13),
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: done ? t.success : current ? t.primary : t.track,
                 }}
               >
-                <Text style={{ color: done || current ? '#fff' : t.muted, fontWeight: '800', fontSize: 13 }}>
+                <Text style={{ color: done || current ? '#fff' : t.muted, fontWeight: '800', fontSize: sz(13) }}>
                   {done ? '✓' : i + 1}
                 </Text>
               </View>
@@ -155,7 +156,7 @@ export default function SkillDetail() {
         })}
       </View>
 
-      <Card style={{ gap: 8 }}>
+      <Card style={{ gap: sz(8) }}>
         <H2>Tips</H2>
         {skill.tips.map((tip, i) => (
           <Body key={i}>• {tip}</Body>
@@ -163,17 +164,17 @@ export default function SkillDetail() {
       </Card>
 
       {sessions.length > 0 && (
-        <View style={{ gap: 8 }}>
+        <View style={{ gap: sz(8) }}>
           <H2>Recent sessions</H2>
           {sessions.slice(0, 5).map((s) => (
-            <Card key={s.id} style={{ paddingVertical: 12 }}>
+            <Card key={s.id} style={{ paddingVertical: sz(12) }}>
               <Row style={{ justifyContent: 'space-between' }}>
                 <Body style={{ fontWeight: '600' }}>{relativeDay(s.startedAt)}</Body>
                 <Body muted>
                   ✅ {s.successes} · ✖️ {s.misses} · {Math.max(1, Math.round(s.durationSec / 60))} min
                 </Body>
               </Row>
-              {!!s.note && <Body muted style={{ marginTop: 4 }}>{s.note}</Body>}
+              {!!s.note && <Body muted style={{ marginTop: sz(4) }}>{s.note}</Body>}
             </Card>
           ))}
         </View>

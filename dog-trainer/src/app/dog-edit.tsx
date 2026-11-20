@@ -6,6 +6,7 @@ import { Body, Button, Screen } from '../components/ui';
 import { ageForInput, birthDateFromAge, type AgeUnit } from '../lib/plan';
 import { newId, useStore } from '../lib/store';
 import { useTheme } from '../lib/theme';
+import { sz } from '../lib/scale';
 
 const EMOJIS = ['🐶', '🐕', '🦮', '🐕‍🦺', '🐩', '🐺', '🦊', '🐾'];
 
@@ -58,9 +59,9 @@ export default function DogEdit() {
   const input = {
     backgroundColor: t.card,
     color: t.text,
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 16,
+    borderRadius: sz(12),
+    padding: sz(14),
+    fontSize: sz(16),
     borderWidth: 1,
     borderColor: t.border,
   } as const;
@@ -69,7 +70,7 @@ export default function DogEdit() {
     <Screen keyboardShouldPersistTaps="handled">
       <Stack.Screen options={{ title: existing ? `Edit ${existing.name}` : 'Add a dog' }} />
 
-      <View style={{ gap: 6 }}>
+      <View style={{ gap: sz(6) }}>
         <Body style={{ fontWeight: '700' }}>Name</Body>
         <TextInput
           value={name}
@@ -82,16 +83,16 @@ export default function DogEdit() {
         />
       </View>
 
-      <View style={{ gap: 6 }}>
+      <View style={{ gap: sz(6) }}>
         <Body style={{ fontWeight: '700' }}>Age today</Body>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
+        <View style={{ flexDirection: 'row', gap: sz(8) }}>
           <TextInput
             value={ageText}
             onChangeText={setAgeText}
             placeholder="e.g. 9"
             placeholderTextColor={t.muted}
             keyboardType="decimal-pad"
-            style={[input, { width: 90, textAlign: 'center' }]}
+            style={[input, { width: sz(90), textAlign: 'center' }]}
             accessibilityLabel="Age"
           />
           {(['weeks', 'months', 'years'] as AgeUnit[]).map((u) => (
@@ -102,7 +103,7 @@ export default function DogEdit() {
               accessibilityState={{ selected: ageUnit === u }}
               style={{
                 flex: 1,
-                borderRadius: 12,
+                borderRadius: sz(12),
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: ageUnit === u ? t.primary : t.card,
@@ -114,12 +115,12 @@ export default function DogEdit() {
             </Pressable>
           ))}
         </View>
-        <Body muted style={{ fontSize: 13 }}>
+        <Body muted style={{ fontSize: sz(13) }}>
           Used to build a week-by-week training plan. A rough age is fine.
         </Body>
       </View>
 
-      <View style={{ gap: 6 }}>
+      <View style={{ gap: sz(6) }}>
         <Body style={{ fontWeight: '700' }}>Breed (optional)</Body>
         <TextInput
           value={breed}
@@ -132,17 +133,17 @@ export default function DogEdit() {
         />
       </View>
 
-      <View style={{ gap: 6 }}>
+      <View style={{ gap: sz(6) }}>
         <Body style={{ fontWeight: '700' }}>Avatar</Body>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: sz(10) }}>
           {EMOJIS.map((e) => (
             <Pressable
               key={e}
               onPress={() => setEmoji(e)}
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: 14,
+                width: sz(56),
+                height: sz(56),
+                borderRadius: sz(14),
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: emoji === e ? t.primarySoft : t.card,
@@ -150,7 +151,7 @@ export default function DogEdit() {
                 borderColor: emoji === e ? t.primary : t.border,
               }}
             >
-              <Text style={{ fontSize: 28 }}>{e}</Text>
+              <Text style={{ fontSize: sz(28) }}>{e}</Text>
             </Pressable>
           ))}
         </View>

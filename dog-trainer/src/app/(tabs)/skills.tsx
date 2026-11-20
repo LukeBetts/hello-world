@@ -7,6 +7,7 @@ import { PLAN_WEEKS, SKILLS } from '../../data/skills';
 import { ageInWeeks, formatAge, planState, type PlanState } from '../../lib/plan';
 import { useActiveDog, useStore } from '../../lib/store';
 import { useTheme } from '../../lib/theme';
+import { sz } from '../../lib/scale';
 
 type Filter = 'all' | 'todo' | 'behind' | 'done';
 
@@ -46,7 +47,7 @@ export default function Skills() {
       {!hasAge && dog && (
         <Pressable
           onPress={() => router.push({ pathname: '/dog-edit', params: { id: dog.id } })}
-          style={{ backgroundColor: t.primarySoft, borderRadius: 14, padding: 14 }}
+          style={{ backgroundColor: t.primarySoft, borderRadius: sz(14), padding: sz(14) }}
         >
           <Body>
             <Text style={{ fontWeight: '700' }}>Add {dog.name}'s age</Text> to see which skills are due each week and
@@ -56,7 +57,7 @@ export default function Skills() {
       )}
 
       {hasAge && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: sz(8) }}>
           {FILTERS.map((f) => (
             <Chip key={f.id} label={f.label} active={filter === f.id} onPress={() => setFilter(f.id)} />
           ))}
@@ -64,7 +65,7 @@ export default function Skills() {
       )}
 
       {visible.length === 0 && (
-        <Body muted style={{ textAlign: 'center', paddingVertical: 24 }}>
+        <Body muted style={{ textAlign: 'center', paddingVertical: sz(24) }}>
           {filter === 'behind'
             ? 'Nothing overdue. You are on track!'
             : filter === 'todo'
@@ -79,18 +80,18 @@ export default function Skills() {
         const isNow = age === week;
         const isPast = age !== null && week < age;
         return (
-          <View key={week} style={{ gap: 8 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-              <Text style={{ fontSize: 18, fontWeight: '800', color: t.text }}>
+          <View key={week} style={{ gap: sz(8) }}>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: sz(8), flexWrap: 'wrap' }}>
+              <Text style={{ fontSize: sz(18), fontWeight: '800', color: t.text }}>
                 Week {week}
               </Text>
-              <Text style={{ fontSize: 14, color: t.muted }}>{formatAge(week)} old</Text>
+              <Text style={{ fontSize: sz(14), color: t.muted }}>{formatAge(week)} old</Text>
               {isNow && (
-                <View style={{ backgroundColor: t.primary, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 }}>
-                  <Text style={{ color: t.primaryText, fontSize: 12, fontWeight: '800' }}>{dog?.name} is here</Text>
+                <View style={{ backgroundColor: t.primary, borderRadius: sz(999), paddingHorizontal: sz(8), paddingVertical: sz(2) }}>
+                  <Text style={{ color: t.primaryText, fontSize: sz(12), fontWeight: '800' }}>{dog?.name} is here</Text>
                 </View>
               )}
-              {isPast && !isNow && <Text style={{ fontSize: 12, color: t.muted }}>· past</Text>}
+              {isPast && !isNow && <Text style={{ fontSize: sz(12), color: t.muted }}>· past</Text>}
             </View>
             {skills.map((s) => (
               <SkillRow key={s.id} skill={s} />

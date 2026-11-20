@@ -9,6 +9,7 @@ import { formatAge, PLAN_LABEL, summarizePlan } from '../../lib/plan';
 import { useActiveDog, usePeopleNames, useStore } from '../../lib/store';
 import { formatMinutes, lastNDays, relativeDay, streak, successRate } from '../../lib/stats';
 import { useTheme } from '../../lib/theme';
+import { sz } from '../../lib/scale';
 
 export default function Progress() {
   const t = useTheme();
@@ -46,40 +47,40 @@ export default function Progress() {
         </Row>
       </Card>
 
-      <Card style={{ gap: 12 }}>
+      <Card style={{ gap: sz(12) }}>
         <H2>Last 7 days</H2>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: sz(120), gap: sz(8) }}>
           {week.map((d) => {
             const h = maxMin === 0 ? 0 : (d.minutes / maxMin) * 100;
             const hitGoal = d.minutes >= state.settings.dailyGoalMin;
             return (
-              <View key={d.start} style={{ flex: 1, alignItems: 'center', gap: 6 }}>
-                <View style={{ height: 100, width: '100%', justifyContent: 'flex-end' }}>
+              <View key={d.start} style={{ flex: 1, alignItems: 'center', gap: sz(6) }}>
+                <View style={{ height: sz(100), width: '100%', justifyContent: 'flex-end' }}>
                   <View
                     style={{
-                      height: Math.max(h, d.minutes > 0 ? 4 : 2),
+                      height: sz(Math.max(h, d.minutes > 0 ? 4 : 2)),
                       backgroundColor: d.minutes === 0 ? t.track : hitGoal ? t.success : t.primary,
-                      borderRadius: 6,
+                      borderRadius: sz(6),
                     }}
                   />
                 </View>
-                <Text style={{ fontSize: 11, color: t.muted }}>
+                <Text style={{ fontSize: sz(11), color: t.muted }}>
                   {new Date(d.start).toLocaleDateString(undefined, { weekday: 'narrow' })}
                 </Text>
               </View>
             );
           })}
         </View>
-        <Body muted style={{ fontSize: 12 }}>
+        <Body muted style={{ fontSize: sz(12) }}>
           Green = hit your {state.settings.dailyGoalMin}-minute daily goal
         </Body>
       </Card>
 
-      <Card style={{ gap: 12 }}>
+      <Card style={{ gap: sz(12) }}>
         <H2>Training plan</H2>
         {dog.birthDate ? (
           <>
-            <Row style={{ gap: 6 }}>
+            <Row style={{ gap: sz(6) }}>
               {(
                 [
                   ['done', plan.done.length],
@@ -88,14 +89,14 @@ export default function Progress() {
                   ['upcoming', plan.upcoming.length],
                 ] as const
               ).map(([key, n]) => (
-                <View key={key} style={{ flex: 1, alignItems: 'center', gap: 2 }}>
-                  <Text style={{ fontSize: 22, fontWeight: '800', color: planColor(t, key) }}>{n}</Text>
-                  <Text style={{ fontSize: 12, color: t.muted }}>{PLAN_LABEL[key].toLowerCase()}</Text>
+                <View key={key} style={{ flex: 1, alignItems: 'center', gap: sz(2) }}>
+                  <Text style={{ fontSize: sz(22), fontWeight: '800', color: planColor(t, key) }}>{n}</Text>
+                  <Text style={{ fontSize: sz(12), color: t.muted }}>{PLAN_LABEL[key].toLowerCase()}</Text>
                 </View>
               ))}
             </Row>
             <ProgressBar value={plan.done.length / SKILLS.length} color={t.success} />
-            <Body muted style={{ fontSize: 13 }}>
+            <Body muted style={{ fontSize: sz(13) }}>
               {plan.done.length} of {SKILLS.length} skills Reliable or Mastered. {dog.name} is {formatAge(plan.age ?? 0)} old.
             </Body>
           </>
@@ -104,7 +105,7 @@ export default function Progress() {
         )}
       </Card>
 
-      <View style={{ gap: 8 }}>
+      <View style={{ gap: sz(8) }}>
         <H2>History</H2>
         {sessions.length === 0 && <Body muted>No sessions yet. Pick a skill and start training!</Body>}
         {sessions.slice(0, 50).map((s) => {
@@ -123,27 +124,27 @@ export default function Progress() {
                 })
               }
             >
-              <Card style={{ paddingVertical: 12, gap: 2 }}>
+              <Card style={{ paddingVertical: sz(12), gap: sz(2) }}>
                 <Row style={{ justifyContent: 'space-between' }}>
                   <Body style={{ fontWeight: '700', flex: 1 }} >
                     {skill ? `${CATEGORY_EMOJI[skill.category]} ${skill.name}` : 'Unknown skill'}
                   </Body>
-                  <Body muted style={{ fontSize: 13 }}>
+                  <Body muted style={{ fontSize: sz(13) }}>
                     {relativeDay(s.startedAt)}
                   </Body>
                 </Row>
-                <Body muted style={{ fontSize: 13 }}>
+                <Body muted style={{ fontSize: sz(13) }}>
                   {Math.max(1, Math.round(s.durationSec / 60))} min · ✅ {s.successes} · ✖️ {s.misses}
                   {r !== null ? ` · ${r}%` : ''}
                   {showWho ? ` · ${whoLabel(s.by)}` : ''}
                 </Body>
-                {!!s.note && <Body style={{ fontSize: 14, marginTop: 4 }}>“{s.note}”</Body>}
+                {!!s.note && <Body style={{ fontSize: sz(14), marginTop: sz(4) }}>“{s.note}”</Body>}
               </Card>
             </Pressable>
           );
         })}
         {sessions.length > 0 && (
-          <Body muted style={{ fontSize: 12, textAlign: 'center' }}>
+          <Body muted style={{ fontSize: sz(12), textAlign: 'center' }}>
             Long-press a session to delete it.
           </Body>
         )}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useStore, type SyncStatus } from '../lib/store';
 import { useTheme } from '../lib/theme';
+import { sz } from '../lib/scale';
 
 export const SYNC_COPY: Record<SyncStatus, { icon: string; title: string; detail: string }> = {
   local: {
@@ -37,24 +38,24 @@ export function SyncNotice() {
   const { notice, dismissNotice } = useStore();
   if (!notice) return null;
   return (
-    <View pointerEvents="box-none" style={{ position: 'absolute', left: 12, right: 12, bottom: 96 }}>
+    <View pointerEvents="box-none" style={{ position: 'absolute', left: sz(12), right: sz(12), bottom: sz(96) }}>
       <Pressable
         onPress={dismissNotice}
         accessibilityRole="alert"
         style={{
           backgroundColor: t.text,
-          borderRadius: 14,
-          padding: 14,
+          borderRadius: sz(14),
+          padding: sz(14),
           flexDirection: 'row',
-          gap: 10,
+          gap: sz(10),
           alignItems: 'center',
           shadowColor: '#000',
           shadowOpacity: 0.2,
-          shadowRadius: 12,
+          shadowRadius: sz(12),
           elevation: 6,
         }}
       >
-        <Text style={{ flex: 1, color: t.bg, fontSize: 14, lineHeight: 20 }}>{notice}</Text>
+        <Text style={{ flex: 1, color: t.bg, fontSize: sz(14), lineHeight: sz(20) }}>{notice}</Text>
         <Text style={{ color: t.bg, fontWeight: '800' }}>✕</Text>
       </Pressable>
     </View>
@@ -68,8 +69,8 @@ export function SyncWarning() {
   if (sync !== 'offline' && sync !== 'readonly') return null;
   const c = SYNC_COPY[sync];
   return (
-    <View style={{ backgroundColor: t.dangerSoft, borderRadius: 12, padding: 12 }}>
-      <Text style={{ color: t.text, fontSize: 14, lineHeight: 20 }}>
+    <View style={{ backgroundColor: t.dangerSoft, borderRadius: sz(12), padding: sz(12) }}>
+      <Text style={{ color: t.text, fontSize: sz(14), lineHeight: sz(20) }}>
         {c.icon} <Text style={{ fontWeight: '700' }}>{c.title}.</Text> {c.detail}
       </Text>
     </View>

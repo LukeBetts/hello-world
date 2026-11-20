@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Modal, Platform, Pressable, Text, View } from 'react-native';
 import { useTheme } from '../lib/theme';
 import { Button } from './ui';
+import { sz } from '../lib/scale';
 
 type ConfirmOptions = {
   title: string;
@@ -48,15 +49,15 @@ export function ConfirmHost() {
     <Modal transparent animationType="fade" visible onRequestClose={close}>
       <Pressable
         onPress={close}
-        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: sz(24) }}
       >
         <Pressable
           onPress={() => {}}
-          style={{ width: '100%', maxWidth: 360, backgroundColor: t.card, borderRadius: 18, padding: 20, gap: 12 }}
+          style={{ width: '100%', maxWidth: sz(360), backgroundColor: t.card, borderRadius: sz(18), padding: sz(20), gap: sz(12) }}
         >
-          <Text style={{ fontSize: 18, fontWeight: '800', color: t.text }}>{opts.title}</Text>
-          {!!opts.message && <Text style={{ fontSize: 15, lineHeight: 21, color: t.muted }}>{opts.message}</Text>}
-          <View style={{ flexDirection: 'row', gap: 10, marginTop: 4 }}>
+          <Text style={{ fontSize: sz(18), fontWeight: '800', color: t.text }}>{opts.title}</Text>
+          {!!opts.message && <Text style={{ fontSize: sz(15), lineHeight: sz(21), color: t.muted }}>{opts.message}</Text>}
+          <View style={{ flexDirection: 'row', gap: sz(10), marginTop: sz(4) }}>
             <Button title={opts.cancelText ?? 'Cancel'} variant="secondary" style={{ flex: 1 }} onPress={close} />
             <Button
               title={opts.confirmText}

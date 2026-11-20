@@ -10,6 +10,7 @@ import { tapFeedback, useClicker } from '../../lib/clicker';
 import { newId, useActiveDog, useSkillProgress, useStore } from '../../lib/store';
 import { formatDuration, successRate } from '../../lib/stats';
 import { useTheme } from '../../lib/theme';
+import { sz } from '../../lib/scale';
 
 type Rep = 'ok' | 'miss';
 const SUGGESTED_SEC = 5 * 60;
@@ -40,7 +41,7 @@ export default function TrainingSession() {
 
   if (!skill || !dog) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: t.bg, padding: 16, gap: 16 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: t.bg, padding: sz(16), gap: sz(16) }}>
         <Body>Add a dog first to start training.</Body>
         <Button title="Close" onPress={() => router.back()} />
       </SafeAreaView>
@@ -108,9 +109,9 @@ export default function TrainingSession() {
     const rate = successRate(successes, misses);
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: t.bg }}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, padding: 16, gap: 16 }}>
-          <View style={{ alignItems: 'center', gap: 6, marginTop: 12 }}>
-            <Text style={{ fontSize: 56 }}>{(rate ?? 0) >= 70 ? '🏆' : '🐾'}</Text>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, padding: sz(16), gap: sz(16) }}>
+          <View style={{ alignItems: 'center', gap: sz(6), marginTop: sz(12) }}>
+            <Text style={{ fontSize: sz(56) }}>{(rate ?? 0) >= 70 ? '🏆' : '🐾'}</Text>
             <H1>Nice work!</H1>
             <Body muted>
               {dog.name} · {skill.name}
@@ -126,13 +127,13 @@ export default function TrainingSession() {
           {hasNextStep && (
             <Pressable
               onPress={() => setAdvance((a) => !a)}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: t.card, padding: 14, borderRadius: 14 }}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: sz(12), backgroundColor: t.card, padding: sz(14), borderRadius: sz(14) }}
             >
               <View
                 style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 6,
+                  width: sz(24),
+                  height: sz(24),
+                  borderRadius: sz(6),
                   borderWidth: 2,
                   borderColor: t.primary,
                   backgroundColor: advance ? t.primary : 'transparent',
@@ -144,7 +145,7 @@ export default function TrainingSession() {
               </View>
               <View style={{ flex: 1 }}>
                 <Body style={{ fontWeight: '700' }}>Move on to step {progress.step + 2}</Body>
-                <Body muted style={{ fontSize: 13 }}>
+                <Body muted style={{ fontSize: sz(13) }}>
                   {readyForNext ? '80%+ on the last 10 reps — ready to level up!' : 'Recommended once you hit 80% over 10 reps.'}
                 </Body>
               </View>
@@ -159,10 +160,10 @@ export default function TrainingSession() {
             style={{
               backgroundColor: t.card,
               color: t.text,
-              borderRadius: 14,
-              padding: 14,
-              minHeight: 90,
-              fontSize: 15,
+              borderRadius: sz(14),
+              padding: sz(14),
+              minHeight: sz(90),
+              fontSize: sz(15),
               textAlignVertical: 'top',
             }}
           />
@@ -176,16 +177,16 @@ export default function TrainingSession() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: t.bg }}>
-      <View style={{ flex: 1, padding: 16, gap: 14 }}>
+      <View style={{ flex: 1, padding: sz(16), gap: sz(14) }}>
         <Row style={{ justifyContent: 'space-between' }}>
-          <Pressable onPress={discard} hitSlop={12}>
-            <Text style={{ color: t.muted, fontSize: 16, fontWeight: '600' }}>✕ Cancel</Text>
+          <Pressable onPress={discard} hitSlop={sz(12)}>
+            <Text style={{ color: t.muted, fontSize: sz(16), fontWeight: '600' }}>✕ Cancel</Text>
           </Pressable>
-          <Pressable onPress={() => setPaused((p) => !p)} hitSlop={12}>
+          <Pressable onPress={() => setPaused((p) => !p)} hitSlop={sz(12)}>
             <Text
               style={{
                 color: overTime ? t.danger : t.text,
-                fontSize: 22,
+                fontSize: sz(22),
                 fontWeight: '800',
                 fontVariant: ['tabular-nums'],
               }}
@@ -194,25 +195,25 @@ export default function TrainingSession() {
               {formatDuration(elapsed)}
             </Text>
           </Pressable>
-          <Pressable onPress={finish} hitSlop={12}>
-            <Text style={{ color: t.primary, fontSize: 16, fontWeight: '800' }}>Finish</Text>
+          <Pressable onPress={finish} hitSlop={sz(12)}>
+            <Text style={{ color: t.primary, fontSize: sz(16), fontWeight: '800' }}>Finish</Text>
           </Pressable>
         </Row>
 
-        <View style={{ gap: 4 }}>
+        <View style={{ gap: sz(4) }}>
           <H2>{skill.name}</H2>
-          <Card style={{ padding: 12 }}>
-            <Body muted style={{ fontSize: 12, fontWeight: '700' }}>
+          <Card style={{ padding: sz(12) }}>
+            <Body muted style={{ fontSize: sz(12), fontWeight: '700' }}>
               STEP {Math.min(progress.step, skill.steps.length - 1) + 1} OF {skill.steps.length}
             </Body>
-            <Body style={{ marginTop: 4 }}>{stepText}</Body>
+            <Body style={{ marginTop: sz(4) }}>{stepText}</Body>
           </Card>
         </View>
 
         {(readyForNext || struggling || overTime) && (
           <Card
             style={{
-              padding: 12,
+              padding: sz(12),
               backgroundColor: readyForNext ? t.successSoft : t.primarySoft,
               borderColor: 'transparent',
             }}
@@ -235,22 +236,22 @@ export default function TrainingSession() {
             accessibilityRole="button"
             accessibilityLabel="Click and count a success"
             style={({ pressed }) => ({
-              width: 230,
-              height: 230,
-              borderRadius: 115,
+              width: sz(230),
+              height: sz(230),
+              borderRadius: sz(115),
               backgroundColor: t.primary,
               alignItems: 'center',
               justifyContent: 'center',
               transform: [{ scale: pressed ? 0.94 : 1 }],
               shadowColor: t.primary,
               shadowOpacity: 0.35,
-              shadowRadius: 20,
-              shadowOffset: { width: 0, height: 8 },
+              shadowRadius: sz(20),
+              shadowOffset: { width: sz(0), height: sz(8) },
               elevation: 8,
             })}
           >
-            <Text style={{ color: t.primaryText, fontSize: 34, fontWeight: '900', letterSpacing: 2 }}>CLICK</Text>
-            <Text style={{ color: t.primaryText, opacity: 0.85, marginTop: 4 }}>mark + reward</Text>
+            <Text style={{ color: t.primaryText, fontSize: sz(34), fontWeight: '900', letterSpacing: sz(2) }}>CLICK</Text>
+            <Text style={{ color: t.primaryText, opacity: 0.85, marginTop: sz(4) }}>mark + reward</Text>
           </Pressable>
         </View>
 
@@ -260,11 +261,11 @@ export default function TrainingSession() {
             <Stat value={`${misses}`} label="✖️ miss" />
             <Stat value={recentRate === null ? '–' : `${recentRate}%`} label="last 10" />
           </Row>
-          <Row style={{ gap: 4, marginTop: 12, justifyContent: 'center', minHeight: 10 }}>
+          <Row style={{ gap: sz(4), marginTop: sz(12), justifyContent: 'center', minHeight: sz(10) }}>
             {recent.map((r, i) => (
               <View
                 key={i}
-                style={{ width: 18, height: 8, borderRadius: 4, backgroundColor: r === 'ok' ? t.success : t.danger }}
+                style={{ width: sz(18), height: sz(8), borderRadius: sz(4), backgroundColor: r === 'ok' ? t.success : t.danger }}
               />
             ))}
           </Row>

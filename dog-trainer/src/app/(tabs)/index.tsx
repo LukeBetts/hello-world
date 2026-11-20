@@ -9,6 +9,7 @@ import { formatAge, summarizePlan } from '../../lib/plan';
 import { useActiveDog, useStore } from '../../lib/store';
 import { formatMinutes, minutesOn, startOfDay, streak } from '../../lib/stats';
 import { useTheme } from '../../lib/theme';
+import { sz } from '../../lib/scale';
 
 const TIPS = [
   'Keep sessions short — 3 to 5 minutes, a few times a day, beats one long session.',
@@ -33,8 +34,8 @@ export default function Today() {
   if (!dog) {
     return (
       <Screen contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-        <View style={{ alignItems: 'center', gap: 12 }}>
-          <Text style={{ fontSize: 72 }}>🐕</Text>
+        <View style={{ alignItems: 'center', gap: sz(12) }}>
+          <Text style={{ fontSize: sz(72) }}>🐕</Text>
           <H1 style={{ textAlign: 'center' }}>Welcome to Pawsitive</H1>
           <Body muted style={{ textAlign: 'center' }}>
             Step-by-step, reward-based training plans, a built-in clicker, and progress tracking for your dog.
@@ -62,7 +63,7 @@ export default function Today() {
   return (
     <Screen>
       <Row>
-        <Text style={{ fontSize: 44 }}>{dog.emoji}</Text>
+        <Text style={{ fontSize: sz(44) }}>{dog.emoji}</Text>
         <View style={{ flex: 1 }}>
           <H1>{dog.name}</H1>
           <Body muted>
@@ -78,13 +79,13 @@ export default function Today() {
       <SyncWarning />
 
       {plan.age === null ? (
-        <Card style={{ gap: 10, backgroundColor: t.primarySoft, borderColor: t.primarySoft }}>
+        <Card style={{ gap: sz(10), backgroundColor: t.primarySoft, borderColor: t.primarySoft }}>
           <H2>Get a weekly plan</H2>
           <Body>Add {dog.name}'s age and we'll schedule new skills for each week, and show you if you fall behind.</Body>
           <Button title={`Add ${dog.name}'s age`} onPress={() => router.push({ pathname: '/dog-edit', params: { id: dog.id } })} />
         </Card>
       ) : (
-        <Card style={{ gap: 12 }}>
+        <Card style={{ gap: sz(12) }}>
           <Row style={{ justifyContent: 'space-between' }}>
             <H2>
               {plan.behind.length > 0
@@ -101,7 +102,7 @@ export default function Today() {
             value={dueSoFar === 0 ? 0 : plan.done.length / dueSoFar}
             color={plan.behind.length > 0 ? t.danger : t.success}
           />
-          <Body muted style={{ fontSize: 13 }}>
+          <Body muted style={{ fontSize: sz(13) }}>
             {dueSoFar === 0
               ? `The first skills are scheduled at ${PLAN_START_WEEK} weeks old.`
               : `${plan.done.length} of the ${dueSoFar} skills due by now are Reliable or Mastered.`}
@@ -120,7 +121,7 @@ export default function Today() {
       )}
 
       {plan.age !== null && (
-        <View style={{ gap: 10 }}>
+        <View style={{ gap: sz(10) }}>
           <H2>{plan.current.length > 0 ? 'This week' : 'No new skills this week'}</H2>
           {plan.current.length === 0 && (
             <Body muted>
@@ -137,7 +138,7 @@ export default function Today() {
           ))}
           {plan.current.length === 0 && nextSkills.length > 0 && (
             <>
-              <Body style={{ fontWeight: '700', marginTop: 6 }}>
+              <Body style={{ fontWeight: '700', marginTop: sz(6) }}>
                 Coming up at {formatAge(plan.nextWeek!)} old
               </Body>
               {nextSkills.map((s) => (
@@ -148,7 +149,7 @@ export default function Today() {
         </View>
       )}
 
-      <Card style={{ gap: 14 }}>
+      <Card style={{ gap: sz(14) }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <H2>Today's goal</H2>
           <Body muted>
@@ -172,12 +173,12 @@ export default function Today() {
       )}
 
       <Pressable onPress={() => router.push('/skills')}>
-        <Text style={{ color: t.primary, fontWeight: '700', textAlign: 'center', padding: 8 }}>
+        <Text style={{ color: t.primary, fontWeight: '700', textAlign: 'center', padding: sz(8) }}>
           See the full plan →
         </Text>
       </Pressable>
 
-      <Card style={{ backgroundColor: t.primarySoft, borderColor: t.primarySoft, gap: 6 }}>
+      <Card style={{ backgroundColor: t.primarySoft, borderColor: t.primarySoft, gap: sz(6) }}>
         <Text style={{ fontWeight: '800', color: t.primary }}>💡 Trainer tip</Text>
         <Body>{tip}</Body>
       </Card>
