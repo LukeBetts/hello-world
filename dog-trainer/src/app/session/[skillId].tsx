@@ -1,8 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { confirmAction } from '../../components/ConfirmDialog';
 import { Body, Button, Card, H1, H2, Row, Stat } from '../../components/ui';
 import { SKILL_BY_ID } from '../../data/skills';
 import { tapFeedback, useClicker } from '../../lib/clicker';
@@ -94,10 +95,13 @@ export default function TrainingSession() {
 
   const discard = () => {
     if (reps.length === 0 && elapsed < 10) return router.back();
-    Alert.alert('Discard session?', 'This session will not be saved.', [
-      { text: 'Keep training', style: 'cancel' },
-      { text: 'Discard', style: 'destructive', onPress: () => router.back() },
-    ]);
+    confirmAction({
+      title: 'Discard session?',
+      message: 'This session will not be saved.',
+      cancelText: 'Keep training',
+      confirmText: 'Discard',
+      onConfirm: () => router.back(),
+    });
   };
 
   if (finished) {

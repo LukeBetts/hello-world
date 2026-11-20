@@ -25,7 +25,15 @@
     },
     "scheme": "pawsitive",
     "plugins": [
-      "expo-router"
+      [
+        "expo-router",
+        {
+          "asyncRoutes": {
+            "web": false
+          },
+          "sitemap": false
+        }
+      ]
     ]
   }
 }

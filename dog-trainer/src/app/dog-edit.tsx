@@ -1,6 +1,7 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
+import { confirmAction } from '../components/ConfirmDialog';
 import { Body, Button, Screen } from '../components/ui';
 import { newId, useStore } from '../lib/store';
 import { useTheme } from '../lib/theme';
@@ -30,17 +31,15 @@ export default function DogEdit() {
 
   const remove = () => {
     if (!existing) return;
-    Alert.alert(`Remove ${existing.name}?`, 'Their sessions and progress will be deleted too.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Remove',
-        style: 'destructive',
-        onPress: () => {
-          dispatch({ type: 'removeDog', id: existing.id });
-          router.back();
-        },
+    confirmAction({
+      title: `Remove ${existing.name}?`,
+      message: 'Their sessions and progress will be deleted too.',
+      confirmText: 'Remove',
+      onConfirm: () => {
+        dispatch({ type: 'removeDog', id: existing.id });
+        router.back();
       },
-    ]);
+    });
   };
 
   const input = {

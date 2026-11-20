@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { ConfirmHost } from '../components/ConfirmDialog';
 import { StoreProvider, useStore } from '../lib/store';
 import { useTheme } from '../lib/theme';
 
@@ -43,6 +44,7 @@ export default function RootLayout() {
     <StoreProvider>
       <StatusBar style="auto" />
       <RootStack />
+      <ConfirmHost />
     </StoreProvider>
   );
 }

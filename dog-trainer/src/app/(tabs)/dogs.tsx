@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { confirmAction } from '../../components/ConfirmDialog';
 import { Body, Button, Card, H2, Row, Screen } from '../../components/ui';
 import { tapFeedback } from '../../lib/clicker';
 import { useStore } from '../../lib/store';
@@ -90,10 +91,12 @@ export default function Dogs() {
           title="Erase all data"
           variant="danger"
           onPress={() =>
-            Alert.alert('Erase everything?', 'All dogs, sessions and progress will be deleted.', [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Erase', style: 'destructive', onPress: () => dispatch({ type: 'reset' }) },
-            ])
+            confirmAction({
+              title: 'Erase everything?',
+              message: 'All dogs, sessions and progress will be deleted.',
+              confirmText: 'Erase',
+              onConfirm: () => dispatch({ type: 'reset' }),
+            })
           }
         />
       </Card>

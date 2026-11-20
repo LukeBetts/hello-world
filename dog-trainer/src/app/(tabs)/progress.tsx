@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React, { useMemo } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { confirmAction } from '../../components/ConfirmDialog';
 import { Body, Card, H2, ProgressBar, Row, Screen, Stat } from '../../components/ui';
 import { CATEGORIES, CATEGORY_EMOJI, SKILLS, SKILL_BY_ID } from '../../data/skills';
 import { useActiveDog, useStore } from '../../lib/store';
@@ -104,10 +105,12 @@ export default function Progress() {
               key={s.id}
               onPress={() => skill && router.push(`/skill/${skill.id}`)}
               onLongPress={() =>
-                Alert.alert('Delete session?', `${skill?.name ?? 'Session'} · ${relativeDay(s.startedAt)}`, [
-                  { text: 'Cancel', style: 'cancel' },
-                  { text: 'Delete', style: 'destructive', onPress: () => dispatch({ type: 'removeSession', id: s.id }) },
-                ])
+                confirmAction({
+                  title: 'Delete session?',
+                  message: `${skill?.name ?? 'Session'} · ${relativeDay(s.startedAt)}`,
+                  confirmText: 'Delete',
+                  onConfirm: () => dispatch({ type: 'removeSession', id: s.id }),
+                })
               }
             >
               <Card style={{ paddingVertical: 12, gap: 2 }}>
