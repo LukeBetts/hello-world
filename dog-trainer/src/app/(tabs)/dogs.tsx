@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { confirmAction } from '../../components/ConfirmDialog';
+import { SYNC_COPY } from '../../components/SyncBanner';
 import { Body, Button, Card, H2, Row, Screen } from '../../components/ui';
 import { tapFeedback } from '../../lib/clicker';
 import { useStore } from '../../lib/store';
@@ -11,7 +12,8 @@ const GOALS = [5, 10, 15, 20, 30];
 
 export default function Dogs() {
   const t = useTheme();
-  const { state, dispatch } = useStore();
+  const { state, dispatch, sync } = useStore();
+  const shared = sync !== 'local';
 
   return (
     <Screen>
@@ -81,19 +83,36 @@ export default function Dogs() {
         </Body>
       </Card>
 
+      <Card style={{ gap: 6 }}>
+        <H2>
+          {SYNC_COPY[sync].icon} {SYNC_COPY[sync].title}
+        </H2>
+        <Body muted style={{ fontSize: 13 }}>
+          {SYNC_COPY[sync].detail}
+        </Body>
+        {sync === 'synced' && (
+          <Body muted style={{ fontSize: 13 }}>
+            To train together, share this page by email from its Share menu and give the person Editor access.
+          </Body>
+        )}
+      </Card>
+
       <Card style={{ gap: 8 }}>
         <H2>About</H2>
         <Body muted style={{ fontSize: 13 }}>
-          Pawsitive uses reward-based (positive reinforcement) methods. Your data stays on this device. For aggression,
-          severe anxiety, or behaviour that worries you, please consult a qualified trainer or veterinary behaviourist.
+          Pawsitive uses reward-based (positive reinforcement) methods. For aggression, severe anxiety, or behaviour
+          that worries you, please consult a qualified trainer or veterinary behaviourist.
         </Body>
         <Button
           title="Erase all data"
           variant="danger"
+          disabled={sync === 'readonly'}
           onPress={() =>
             confirmAction({
               title: 'Erase everything?',
-              message: 'All dogs, sessions and progress will be deleted.',
+              message: shared
+                ? 'All dogs, sessions and progress will be deleted for everyone this page is shared with.'
+                : 'All dogs, sessions and progress will be deleted.',
               confirmText: 'Erase',
               onConfirm: () => dispatch({ type: 'reset' }),
             })

@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React, { useMemo } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { SyncWarning } from '../../components/SyncBanner';
 import { SkillRow } from '../../components/SkillRow';
 import { Body, Button, Card, H1, H2, ProgressBar, Row, Screen, Stat } from '../../components/ui';
 import { SKILLS, SKILL_BY_ID } from '../../data/skills';
@@ -69,6 +70,8 @@ export default function Today() {
           <H1>{dog.name}</H1>
         </View>
       </Row>
+
+      <SyncWarning />
 
       <Card style={{ gap: 14 }}>
         <Row style={{ justifyContent: 'space-between' }}>

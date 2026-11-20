@@ -4,13 +4,13 @@ import { Pressable, Text, View } from 'react-native';
 import { confirmAction } from '../../components/ConfirmDialog';
 import { Body, Card, H2, ProgressBar, Row, Screen, Stat } from '../../components/ui';
 import { CATEGORIES, CATEGORY_EMOJI, SKILLS, SKILL_BY_ID } from '../../data/skills';
-import { useActiveDog, useStore } from '../../lib/store';
+import { useActiveDog, usePeopleNames, useStore } from '../../lib/store';
 import { formatMinutes, lastNDays, relativeDay, streak, successRate } from '../../lib/stats';
 import { useTheme } from '../../lib/theme';
 
 export default function Progress() {
   const t = useTheme();
-  const { state, dispatch } = useStore();
+  const { state, dispatch, myId } = useStore();
   const dog = useActiveDog();
 
   const sessions = useMemo(() => state.sessions.filter((s) => s.dogId === dog?.id), [state.sessions, dog?.id]);
@@ -20,6 +20,10 @@ export default function Progress() {
   const totals = sessions.reduce((a, s) => ({ ok: a.ok + s.successes, miss: a.miss + s.misses }), { ok: 0, miss: 0 });
   const rate = successRate(totals.ok, totals.miss);
   const progress = (dog && state.progress[dog.id]) || {};
+  const people = useMemo(() => [...new Set(sessions.map((s) => s.by).filter((b): b is string => !!b))], [sessions]);
+  const names = usePeopleNames(people);
+  const showWho = people.length > 1;
+  const whoLabel = (by?: string) => (by === myId ? 'You' : (by && names[by]) || 'Someone');
 
   if (!dog) {
     return (
@@ -125,6 +129,7 @@ export default function Progress() {
                 <Body muted style={{ fontSize: 13 }}>
                   {Math.max(1, Math.round(s.durationSec / 60))} min · ✅ {s.successes} · ✖️ {s.misses}
                   {r !== null ? ` · ${r}%` : ''}
+                  {showWho ? ` · ${whoLabel(s.by)}` : ''}
                 </Body>
                 {!!s.note && <Body style={{ fontSize: 14, marginTop: 4 }}>“{s.note}”</Body>}
               </Card>

@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { ConfirmHost } from '../components/ConfirmDialog';
+import { SyncNotice } from '../components/SyncBanner';
 import { StoreProvider, useStore } from '../lib/store';
 import { useTheme } from '../lib/theme';
 
@@ -44,6 +45,7 @@ export default function RootLayout() {
     <StoreProvider>
       <StatusBar style="auto" />
       <RootStack />
+      <SyncNotice />
       <ConfirmHost />
     </StoreProvider>
   );
